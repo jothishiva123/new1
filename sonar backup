@@ -1,0 +1,22 @@
+pipeline {
+agent any 
+     tools {
+         maven 'maven3'
+         }
+      stages {
+        stage ('Build maven') {
+            steps {
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'jothishiva123', url: 'https://github.com/jothishiva123/mvn.git']]])
+                sh 'mvn clean package'
+                echo 'Build Completed'
+                }
+        }
+   stage('Code Analysis') {
+            steps {
+                withSonarQubeEnv('sonarqube') {
+                sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.7.0.1746:sonar'
+                                             }
+               }
+                                }
+}
+}
